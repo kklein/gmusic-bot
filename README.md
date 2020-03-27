@@ -8,11 +8,13 @@ Access to the bot can be restricted by filtering on usernames. This is a key fea
 
 `main.py` contains the music management methods and is written in a format as to be plugged into Google Cloud Functions directly. The function to be submitted is `webhook`. In comparison to `bot.py`, this does not rely on continuous polling but rather on a webhook. Moreover, `bot.py` will require you to set some envrionment variables.
   * `GMUSIC_LOGIN` is, again, the key received through the browser authentication
-  * `REFRESH_TOKEN`, `CLIENT_ID`, `CLIENT_SECRET` can be found in the credentials file created in the process of authenticating for the first time
+  * `REFRESH_TOKEN`, `CLIENT_ID`, `CLIENT_SECRET` can be found in the credentials file created in the process of authenticating for the first time.
 
 The latter is supposed to be called `mobileclient.cred` and could be found under `~/.local/share/gmusicapi/` on my system.
 
-In order to deploy `main.py` on Google fugnctions, the only further step required is to 'activate' the webhook:
+Uploading `main.py`, setting the environment variables as well as chosing `webhook` as function to be run can both be done via the web interface as well as via their cli.
+
+In order to deploy `main.py` on Google Cloud Functions, the only further step required is to 'activate' the webhook:
 `curl "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook?url=https://<YOUR_SERVER_REGION>-<YOUR_PROJECT_NAME>.cloudfunctions.net/<YOUR_GC_FUNCTION_NAME>"`
 
 Many thanks to [Simon Weber](https://www.simonmweber.com/) for providing help regarding the authentication and his work on gmusicapi in general!
