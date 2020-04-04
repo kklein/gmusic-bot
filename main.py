@@ -52,6 +52,7 @@ def add_to_playlist(api, query):
 
 def webhook(request):
     bot = telegram.Bot(token=os.environ["TELEGRAM_TOKEN"])
+    owner_id = os.environ["OWNER_ID"]
     if request.method == "POST":
         update = telegram.Update.de_json(request.get_json(force=True), bot)
         if update.message.from_user.username not in USER_WHITELIST:
@@ -60,4 +61,5 @@ def webhook(request):
         api = get_api_via_refresh_auth()
         result = add_to_playlist(api, update.message.text)
         bot.sendMessage(chat_id=chat_id, text=result)
+        bot.sendMessage(chat_id=owner_id, text=message.from_user.username + " : " + result)
     return "ok"
