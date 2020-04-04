@@ -61,5 +61,5 @@ def webhook(request):
         api = get_api_via_refresh_auth()
         result = add_to_playlist(api, update.message.text)
         bot.sendMessage(chat_id=chat_id, text=result)
-        bot.sendMessage(chat_id=owner_id, text=message.from_user.username + " : " + result)
+        bot.sendMessage(chat_id=owner_id, text=update.message.from_user.username + " : " + result)
     return "ok"
