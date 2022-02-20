@@ -1,4 +1,5 @@
 import os
+
 import telegram
 from ytmusicapi import YTMusic
 
@@ -21,20 +22,22 @@ def is_result_successful(result):
 
 
 def reply_to_suggester(chat_id, result):
-    if not is_result_successful(result):
+    if is_result_successful(result):
+        response_1 = f"""Added the song '{result["song"]}' by '{result["artist"]}' to playlist.
+        https://music.youtube.com/playlist?list={result["playlist"]}"""
+        response_2 = "Many thanks! :)"
+        get_bot().sendMessage(chat_id=chat_id, text=response_1)
+        get_bot().sendMessage(chat_id=chat_id, text=response_2)
+    else:
         response = "Could not find a hit for your query. :("
         get_bot().sendMessage(chat_id=chat_id, text=response)
-    response_1 = f"""Added the song '{result["song"]}' by '{result["artist"]}' to playlist.
-    https://music.youtube.com/playlist?list={result["playlist"]}"""
-    response_2 = "Many thanks! :)"
-    get_bot().sendMessage(chat_id=chat_id, text=response_1)
-    get_bot().sendMessage(chat_id=chat_id, text=response_2)
 
 
 def notify_owner(owner_id, suggester_username, result):
-    if not is_result_successful(result):
+    if is_result_successful(result):
+        response = f"""{suggester_username} :  {result["song"]} - {result["artist"]}"""
+    else:
         response = f"""Could not find a hit for'{suggester_username}'s query: {result["query"]}"""
-    response = f"""{suggester_username} :  {result["song"]} - {result["artist"]}"""
     get_bot().sendMessage(chat_id=owner_id, text=response)
 
 
@@ -48,7 +51,7 @@ def add_to_playlist(ytmusic, query, playlist_id=None):
         playlist_id = os.environ["PLAYLIST_ID"]
     search_results = ytmusic.search(query)
     if len(search_results) == 0 or "videoId" not in search_results[0]:
-        return {"song": None, "artist": None, "playlist": playlist_id}
+        return {"song": None, "artist": None, "playlist": playlist_id, "query": query}
     search_result = search_results[0]
     ytmusic.add_playlist_items(playlist_id, [search_result["videoId"]])
     return {
